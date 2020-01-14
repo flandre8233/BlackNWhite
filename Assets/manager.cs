@@ -5,13 +5,16 @@ using UnityEngine;
 public class manager : SingletonMonoBehavior<manager>
 {
     public GameObject[] beadObjectArray;
-    public int rowNumber;
-    public int beadWidth;
     public List<int> allRowData;
     public List<GameObject> allBeadArray;
 
     public int Finish = 0;
+   
+
+
     public int combo = 0;
+
+  
 
     public int TotalBean = 150;
 
@@ -42,9 +45,7 @@ public class manager : SingletonMonoBehavior<manager>
 
     void gameStartTimer()
     {
-        print("gameStartTimer");
         Timer += globalVarManager.deltaTime;
-
     }
 
     void allRowFixPos()
@@ -57,11 +58,14 @@ public class manager : SingletonMonoBehavior<manager>
 
     bool doOnce = false;
 
+   
+
     void hitRightBead()
     {
         combo++;
         Finish++;
-       
+        FPSS.instance.RecordFinish();
+
         //gameStartTimeLeft = 2;
         allRowData.RemoveAt(0);
         Destroy(allBeadArray[0]);
@@ -100,6 +104,15 @@ public class manager : SingletonMonoBehavior<manager>
 
     void playerContorl()
     {
+        if (CharacterController.instance.SP <= 0)
+        {
+            return;
+        }
+        if (CharacterController.instance.CharStatus == CharStatusEnum.FallenDown)
+        {
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Z))
         {
             button(0);
@@ -109,11 +122,14 @@ public class manager : SingletonMonoBehavior<manager>
             button(1);
         }
     }
-
+    public float WrongLostSp;
     void failhit()
     {
         print("failhit");
         combo = 0;
+        CharacterController.instance.SP -= WrongLostSp;
+        CharacterController.instance.CharStatus = CharStatusEnum.FallenDown;
+
     }
 
 
@@ -124,9 +140,7 @@ public class manager : SingletonMonoBehavior<manager>
         int perBeadX = -2;
         int perBeadY = 0;
 
-        //int perBeadX = 5 / rowNumber;
-        //int perBeadY = 1;
-        int thisRowSpawnNumber = Random.Range(0, rowNumber);
+        int thisRowSpawnNumber = Random.Range(0, 2);
         allRowData.Add(thisRowSpawnNumber);
         Vector3 thisBeadVector3 = new Vector3(perBeadX + 1 * allRowData.Count - 1 , perBeadY, 0);
         GameObject go = Instantiate(beadObjectArray[thisRowSpawnNumber], thisBeadVector3, Quaternion.identity);

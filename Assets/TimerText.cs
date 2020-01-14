@@ -24,6 +24,6 @@ public class TimerText : SingletonMonoBehavior<TimerText>
 (int)timeSpan.TotalMinutes, // <== Note the casting to int.
         timeSpan.Seconds);
 
-        text.text = TimeString;
+        text.text =  "Time : " + TimeString;
     }
 }
