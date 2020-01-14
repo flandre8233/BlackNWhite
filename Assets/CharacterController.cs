@@ -10,7 +10,7 @@ public enum CharStatusEnum {
 public class CharacterController : SingletonMonoBehavior<CharacterController>
 {
     public CharStatusEnum CharStatus;
-    public CharStatusEnum CharStatusCopy;
+    CharStatusEnum CharStatusCopy;
 
     bool FirstTimeEntry;
 
