@@ -29,12 +29,25 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
     {
         SP = MaxSP;
         CharStatusCopy = CharStatus;
+        globalUpdateManager.instance.registerUpdateDg(ToUpdate);
+    }
+
+    private void OnDestroy()
+    {
+        globalUpdateManager.instance.UnregisterUpdateDg(ToUpdate);
     }
 
     // Update is called once per frame
-    void Update()
+    void ToUpdate()
     {
         SPCounting();
+        StatusAdmin();
+    }
+
+    
+
+    void StatusAdmin()
+    {
         FirstTimeEntry = CharStatusCopy != CharStatus;
         CharStatusCopy = CharStatus;
         switch (CharStatus)
@@ -48,11 +61,9 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
             case CharStatusEnum.FallenDown:
                 if (FirstTimeEntry)
                 {
-                    StartCoroutine( FallenDownCounter() );
+                    StartCoroutine(FallenDownCounter());
                     PlayerViewObjectTransform.eulerAngles = new Vector3(0, 0, -35);
                 }
-
-
                 break;
             default:
                 break;
@@ -69,7 +80,8 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
     void SPCounting()
     {
         float val = FPSS.instance.FinshPerSpecifySec <= 0 ? -5 : FPSS.instance.FinshPerSpecifySec;
-        SP += (SPRecoverPerSec - val) * multiple * Time.deltaTime;
+        val *= multiple;
+        SP += (SPRecoverPerSec - val) * Time.deltaTime;
         SP = MyClamp(SP, 0, MaxSP);
 
         if (SP <= 0 )

@@ -533,10 +533,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CharStatus: 0
-  CharStatusCopy: 0
   MaxSP: 100
   SP: 0
-  SPRecoverPerSec: 2
+  SPRecoverPerSec: 10
   multiple: 5
   PlayerViewObjectTransform: {fileID: 1958996543}
 --- !u!1 &1078070565
