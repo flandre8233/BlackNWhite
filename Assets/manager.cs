@@ -113,6 +113,10 @@ public class manager : SingletonMonoBehavior<manager>
             return;
         }
 
+
+
+
+
         if (Input.GetKeyDown(KeyCode.Z))
         {
             button(0);
