@@ -4,7 +4,8 @@ using UnityEngine;
 
 public enum CharStatusEnum {
     Normal,
-    FallenDown
+    FallenDown,
+    Win
 }
 
 public class CharacterController : SingletonMonoBehavior<CharacterController>
@@ -61,8 +62,15 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
             case CharStatusEnum.FallenDown:
                 if (FirstTimeEntry)
                 {
-                    StartCoroutine(FallenDownCounter());
                     PlayerViewObjectTransform.eulerAngles = new Vector3(0, 0, -35);
+                    FallenDownTimer = 0;
+                }
+
+                FallenDownTimer += Time.deltaTime;
+                if (FallenDownTimer >= 1)
+                {
+                    PlayerViewObjectTransform.eulerAngles = new Vector3(0, 0, 0);
+                    CharStatus = CharStatusEnum.Normal;
                 }
                 break;
             default:
@@ -70,12 +78,7 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
         }
     }
 
-    IEnumerator FallenDownCounter()
-    {
-        yield return new WaitForSeconds(1f);
-        PlayerViewObjectTransform.eulerAngles = new Vector3(0, 0, 0);
-        CharStatus = CharStatusEnum.Normal;
-    }
+    float FallenDownTimer = 0;
 
     void SPCounting()
     {

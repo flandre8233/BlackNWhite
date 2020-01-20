@@ -82,6 +82,8 @@ public class manager : SingletonMonoBehavior<manager>
 
     void OnWin()
     {
+        CharacterController.instance.CharStatus = CharStatusEnum.Win;
+
         inGameover = true;
         globalUpdateManager.instance.UnregisterUpdateDg(playerContorl);
         globalUpdateManager.instance.UnregisterUpdateDg(gameStartTimer);
