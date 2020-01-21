@@ -5,6 +5,7 @@ using UnityEngine;
 public enum CharStatusEnum {
     Normal,
     FallenDown,
+    Embrace,
     Win
 }
 
@@ -23,7 +24,7 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
     public float multiple;
 
     [SerializeField]
-    Transform PlayerViewObjectTransform;
+   public  Transform PlayerViewObjectTransform;
 
     // Start is called before the first frame update
     void Start()
@@ -70,6 +71,20 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
                 if (FallenDownTimer >= 1)
                 {
                     PlayerViewObjectTransform.eulerAngles = new Vector3(0, 0, 0);
+                    CharStatus = CharStatusEnum.Normal;
+                }
+                break;
+            case CharStatusEnum.Embrace:
+                if (FirstTimeEntry)
+                {
+                    //old player
+                    PlayerViewObjectTransform.parent = manager.instance.allBeadArray[2].transform;
+                    manager.instance.hitRightBead();
+
+                    PlayerViewObjectTransform = manager.instance.NextCharTrans;
+                    manager.instance.NextCharTrans = null;
+                    PlayerViewObjectTransform.parent = null;
+
                     CharStatus = CharStatusEnum.Normal;
                 }
                 break;

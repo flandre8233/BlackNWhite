@@ -13,7 +13,7 @@ public class EmbraceDecide : SingletonMonoBehavior<EmbraceDecide>
     float PingPongSpeed;
 
     [SerializeField]
-    int DecideDiff;
+    float DecideDiff;
 
     float DecideVal;
 
@@ -33,17 +33,34 @@ public class EmbraceDecide : SingletonMonoBehavior<EmbraceDecide>
             return (DecideVal >= GetLeftSideDecideArea && DecideVal < GetRightSideDecideArea );
         }
     }
+    bool GetIsInDecideAreaPrefect {
+        get {
+            return (DecideVal >= GetPerfectLeftSideDecideArea && DecideVal < GetPerfectRightSideDecideArea);
+        }
+    }
 
-    float GetLeftSideDecideArea {
+    public float GetLeftSideDecideArea {
         get {
             return GetDecidePoint - DecideDiff;
         }
     }
-    float GetRightSideDecideArea {
+    public float GetRightSideDecideArea {
         get {
             return GetDecidePoint + DecideDiff;
         }
     }
+
+    public float GetPerfectLeftSideDecideArea {
+        get {
+            return GetDecidePoint - (DecideDiff*0.3f);
+        }
+    }
+    public float GetPerfectRightSideDecideArea {
+        get {
+            return GetDecidePoint + (DecideDiff*0.3f);
+        }
+    }
+
     bool isToLeft;
 
     // Start is called before the first frame update
@@ -56,6 +73,11 @@ public class EmbraceDecide : SingletonMonoBehavior<EmbraceDecide>
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            print(GetIsHitDecideArea());
+        }
+
         CurTime += Time.deltaTime;
         if (isToLeft)
         {
@@ -71,5 +93,18 @@ public class EmbraceDecide : SingletonMonoBehavior<EmbraceDecide>
             CurTime = 0;
             isToLeft = !isToLeft;
         }
+    }
+
+    string GetIsHitDecideArea()
+    {
+        if (GetIsInDecideAreaPrefect)
+        {
+            return "PREFECT";
+        }
+        if (GetIsInDecideArea)
+        {
+            return "Good";
+        }
+        return "MISS";
     }
 }

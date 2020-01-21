@@ -8,6 +8,11 @@ public class manager : SingletonMonoBehavior<manager>
     public List<int> allRowData;
     public List<GameObject> allBeadArray;
 
+    public int SpecialTotalSpawn;
+    int EmbraceSpawnedCount;
+    public Transform NextCharTrans;
+
+
     public int Finish = 0;
    
 
@@ -38,6 +43,7 @@ public class manager : SingletonMonoBehavior<manager>
         serializeOneRow();
         serializeOneRow();
 
+
         globalUpdateManager.instance.registerUpdateDg(playerContorl);
         globalUpdateManager.instance.registerUpdateDg(gameStartTimer);
         start = true;
@@ -60,7 +66,7 @@ public class manager : SingletonMonoBehavior<manager>
 
    
 
-    void hitRightBead()
+   public void hitRightBead()
     {
         combo++;
         Finish++;
@@ -97,6 +103,7 @@ public class manager : SingletonMonoBehavior<manager>
         if (allRowData[2] == number)
         {
             hitRightBead();
+          
         }
         else
         {
@@ -115,9 +122,11 @@ public class manager : SingletonMonoBehavior<manager>
             return;
         }
 
-
-
-
+        if (allRowData[2] == 2)
+        {
+            CharacterController.instance.CharStatus = CharStatusEnum.Embrace;
+            return;
+        }
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
@@ -139,10 +148,18 @@ public class manager : SingletonMonoBehavior<manager>
     }
 
 
-
+    [SerializeField]
+    GameObject PlayerPrefab;
 
     void serializeOneRow()
     {
+        if (EmbraceSpawnedCount * (TotalBean / SpecialTotalSpawn) < Finish)
+        {
+            EmbraceSpawnedCount++;
+            SpawnSpecialBead();
+            return;
+        }
+
         int perBeadX = -2;
         int perBeadY = 0;
 
@@ -153,6 +170,23 @@ public class manager : SingletonMonoBehavior<manager>
         allBeadArray.Add(go);
     }
 
+    void SpawnSpecialBead()
+    {
+        int perBeadX = -2;
+        int perBeadY = 0;
 
+        int thisRowSpawnNumber = 2 ;
+        allRowData.Add(thisRowSpawnNumber);
+        Vector3 thisBeadVector3 = new Vector3(perBeadX + 1 * allRowData.Count - 1, perBeadY, 0);
+        GameObject go = Instantiate(beadObjectArray[thisRowSpawnNumber], thisBeadVector3, Quaternion.identity);
+        allBeadArray.Add(go);
+
+        thisBeadVector3.x += 1;
+        thisBeadVector3.y += 1.5f;
+        GameObject go1 = Instantiate(PlayerPrefab, thisBeadVector3, Quaternion.identity);
+        go1.transform.parent = go.transform;
+        go1.transform.localScale = new Vector3(Random.Range(0.7f, 1.3f ) , Random.Range(0.7f, 1.3f), Random.Range(0.7f, 1.3f ) );
+        NextCharTrans = go1.transform;
+    }
 
 }
