@@ -9,7 +9,7 @@ public class manager : SingletonMonoBehavior<manager>
     public List<GameObject> allBeadArray;
 
     public int SpecialTotalSpawn;
-    int EmbraceSpawnedCount;
+    public int EmbraceSpawnedCount;
     public Transform NextCharTrans;
 
 
@@ -128,6 +128,11 @@ public class manager : SingletonMonoBehavior<manager>
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            hitRightBead();
+        }
+
         if (Input.GetKeyDown(KeyCode.Z))
         {
             button(0);
@@ -138,7 +143,7 @@ public class manager : SingletonMonoBehavior<manager>
         }
     }
     public float WrongLostSp;
-    void failhit()
+   public  void failhit()
     {
         print("failhit");
         combo = 0;

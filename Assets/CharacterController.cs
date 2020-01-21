@@ -42,7 +42,6 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
     // Update is called once per frame
     void ToUpdate()
     {
-        SPCounting();
         StatusAdmin();
     }
 
@@ -59,6 +58,9 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
                 {
 
                 }
+
+                SPCounting();
+
                 break;
             case CharStatusEnum.FallenDown:
                 if (FirstTimeEntry)
@@ -77,20 +79,50 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
             case CharStatusEnum.Embrace:
                 if (FirstTimeEntry)
                 {
-                    //old player
-                    PlayerViewObjectTransform.parent = manager.instance.allBeadArray[2].transform;
-                    manager.instance.hitRightBead();
+                    EmbraceDecideUIView.instance.SetOpen();
+                }
 
-                    PlayerViewObjectTransform = manager.instance.NextCharTrans;
-                    manager.instance.NextCharTrans = null;
-                    PlayerViewObjectTransform.parent = null;
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
 
-                    CharStatus = CharStatusEnum.Normal;
+                    switch (EmbraceDecide.instance.GetIsHitDecideArea()) //懶
+                    {
+                        case "PREFECT":
+                            SP = MaxSP;
+                            OnRelayCorrectly();
+                            break;
+                        case "Good":
+                            SP += MaxSP * 0.35f;
+
+                            OnRelayCorrectly();
+                            break;
+                        case "MISS":
+                            manager.instance.failhit();
+                            break;
+                        default:
+                            break;
+                    }
+
+                   
+                    EmbraceDecideUIView.instance.SetClose();
                 }
                 break;
             default:
                 break;
         }
+    }
+
+    void OnRelayCorrectly()
+    {
+        //old player
+        PlayerViewObjectTransform.parent = manager.instance.allBeadArray[2].transform;
+        manager.instance.hitRightBead();
+
+        PlayerViewObjectTransform = manager.instance.NextCharTrans;
+        manager.instance.NextCharTrans = null;
+        PlayerViewObjectTransform.parent = null;
+
+        CharStatus = CharStatusEnum.Normal;
     }
 
     float FallenDownTimer = 0;

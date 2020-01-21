@@ -10,12 +10,18 @@ public class EmbraceDecide : SingletonMonoBehavior<EmbraceDecide>
     int maxDecideVal;
 
     [SerializeField]
-    float PingPongSpeed;
+    float InitPingPongSpeed;
 
     [SerializeField]
     float DecideDiff;
 
     float DecideVal;
+
+    public float PingPongSpeed {
+        get {
+            return InitPingPongSpeed / ( (1 + manager.instance.EmbraceSpawnedCount) * 0.65f);
+        }
+    }
 
    public float GetDecideVal {
         get {
@@ -41,23 +47,23 @@ public class EmbraceDecide : SingletonMonoBehavior<EmbraceDecide>
 
     public float GetLeftSideDecideArea {
         get {
-            return GetDecidePoint - DecideDiff;
+            return GetDecidePoint - (DecideDiff / ( (1+manager.instance.EmbraceSpawnedCount) *0.5f ));
         }
     }
     public float GetRightSideDecideArea {
         get {
-            return GetDecidePoint + DecideDiff;
+            return GetDecidePoint + (DecideDiff / ((1 + manager.instance.EmbraceSpawnedCount) * 0.5f));
         }
     }
 
     public float GetPerfectLeftSideDecideArea {
         get {
-            return GetDecidePoint - (DecideDiff*0.3f);
+            return GetDecidePoint - (DecideDiff * 0.5f / (1 + manager.instance.EmbraceSpawnedCount));
         }
     }
     public float GetPerfectRightSideDecideArea {
         get {
-            return GetDecidePoint + (DecideDiff*0.3f);
+            return GetDecidePoint + (DecideDiff * 0.5f / (1 + manager.instance.EmbraceSpawnedCount));
         }
     }
 
@@ -66,12 +72,17 @@ public class EmbraceDecide : SingletonMonoBehavior<EmbraceDecide>
     // Start is called before the first frame update
     void Start()
     {
-        
+        globalUpdateManager.instance.registerUpdateDg(ToUpdate);
+    }
+
+    private void OnDestroy()
+    {
+        globalUpdateManager.instance.UnregisterUpdateDg(ToUpdate);
     }
 
     float CurTime;
     // Update is called once per frame
-    void Update()
+    void ToUpdate()
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -95,7 +106,7 @@ public class EmbraceDecide : SingletonMonoBehavior<EmbraceDecide>
         }
     }
 
-    string GetIsHitDecideArea()
+    public string GetIsHitDecideArea()
     {
         if (GetIsInDecideAreaPrefect)
         {
