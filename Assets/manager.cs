@@ -8,20 +8,18 @@ public class manager : SingletonMonoBehavior<manager>
     public List<int> allRowData;
     public List<GameObject> allBeadArray;
 
+    public MapBlock[] mapBlocks;
+
     public int SpecialTotalSpawn;
     public int EmbraceSpawnedCount;
     public Transform NextCharTrans;
 
 
     public int Finish = 0;
-   
-
 
     public int combo = 0;
 
-  
-
-    public int TotalBean = 150;
+    int TotalBean;
 
     public float Timer = 0;
 
@@ -31,18 +29,21 @@ public class manager : SingletonMonoBehavior<manager>
     // Use this for initialization
     void Start()
     {
-        serializeOneRow();
-        serializeOneRow();
-        serializeOneRow();
-        serializeOneRow();
-        serializeOneRow();
-        serializeOneRow();
-        serializeOneRow();
-        serializeOneRow();
-        serializeOneRow();
-        serializeOneRow();
-        serializeOneRow();
-
+        for (int i = 0; i < mapBlocks.Length; i++)
+        {
+            allRowData.AddRange(mapBlocks[i].ConToInt());
+        }
+        TotalBean = allRowData.Count - 10;
+        serializeOneRow(0);
+        serializeOneRow(1);
+        serializeOneRow(2);
+        serializeOneRow(3);
+        serializeOneRow(4);
+        serializeOneRow(5);
+        serializeOneRow(6);
+        serializeOneRow(7);
+        serializeOneRow(8);
+        serializeOneRow(9);
 
         globalUpdateManager.instance.registerUpdateDg(playerContorl);
         globalUpdateManager.instance.registerUpdateDg(gameStartTimer);
@@ -72,12 +73,11 @@ public class manager : SingletonMonoBehavior<manager>
         Finish++;
         FPSS.instance.RecordFinish();
 
-        //gameStartTimeLeft = 2;
         allRowData.RemoveAt(0);
         Destroy(allBeadArray[0]);
         allBeadArray.RemoveAt(0);
         allRowFixPos();
-        serializeOneRow();
+        serializeOneRow(9);
 
         if (Finish >= TotalBean)
         {
@@ -94,6 +94,7 @@ public class manager : SingletonMonoBehavior<manager>
         globalUpdateManager.instance.UnregisterUpdateDg(playerContorl);
         globalUpdateManager.instance.UnregisterUpdateDg(gameStartTimer);
         globalUpdateManager.instance.UnregisterUpdateDg(TimerText.instance.ToUpdate);
+   
     }
 
     public void button(int number)
@@ -152,11 +153,29 @@ public class manager : SingletonMonoBehavior<manager>
 
     }
 
-
     [SerializeField]
     GameObject PlayerPrefab;
 
-    void serializeOneRow()
+    void serializeOneRow(int index)
+    {
+        if (EmbraceSpawnedCount * (TotalBean / SpecialTotalSpawn) < Finish)
+        {
+            EmbraceSpawnedCount++;
+            SpawnSpecialBead();
+            return;
+        }
+
+        int perBeadX = 0;
+        int perBeadY = 0;
+
+        Vector3 thisBeadVector3 = new Vector3(perBeadX + 1 * allBeadArray.Count - 1 , perBeadY, 0);
+        GameObject go = Instantiate(beadObjectArray[allRowData[index]], thisBeadVector3, Quaternion.identity);
+        allBeadArray.Add(go);
+
+    }
+
+    /*
+     void serializeOneRow()
     {
         if (EmbraceSpawnedCount * (TotalBean / SpecialTotalSpawn) < Finish)
         {
@@ -174,19 +193,19 @@ public class manager : SingletonMonoBehavior<manager>
         GameObject go = Instantiate(beadObjectArray[thisRowSpawnNumber], thisBeadVector3, Quaternion.identity);
         allBeadArray.Add(go);
     }
+     */
 
     void SpawnSpecialBead()
     {
-        int perBeadX = -2;
+        int perBeadX = 0;
         int perBeadY = 0;
 
-        int thisRowSpawnNumber = 2 ;
-        allRowData.Add(thisRowSpawnNumber);
-        Vector3 thisBeadVector3 = new Vector3(perBeadX + 1 * allRowData.Count - 1, perBeadY, 0);
+        int thisRowSpawnNumber = 2; 
+        allRowData[9] = 2;
+        Vector3 thisBeadVector3 = new Vector3(perBeadX + 1 * allBeadArray.Count - 1, perBeadY, 0);
         GameObject go = Instantiate(beadObjectArray[thisRowSpawnNumber], thisBeadVector3, Quaternion.identity);
         allBeadArray.Add(go);
 
-        thisBeadVector3.x += 1;
         thisBeadVector3.y += 1.5f;
         GameObject go1 = Instantiate(PlayerPrefab, thisBeadVector3, Quaternion.identity);
         go1.transform.parent = go.transform;

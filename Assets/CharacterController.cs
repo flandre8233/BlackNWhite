@@ -95,15 +95,17 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
                             SP += MaxSP * 0.35f;
 
                             OnRelayCorrectly();
+
                             break;
                         case "MISS":
+                            OnRelayCorrectly();
                             manager.instance.failhit();
                             break;
                         default:
                             break;
                     }
 
-                   
+
                     EmbraceDecideUIView.instance.SetClose();
                 }
                 break;
@@ -121,7 +123,6 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
         PlayerViewObjectTransform = manager.instance.NextCharTrans;
         manager.instance.NextCharTrans = null;
         PlayerViewObjectTransform.parent = null;
-
         CharStatus = CharStatusEnum.Normal;
     }
 
