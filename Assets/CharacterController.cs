@@ -26,6 +26,9 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
     [SerializeField]
    public  Transform PlayerViewObjectTransform;
 
+    [SerializeField]
+    AnimationCurve Curve;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -130,7 +133,9 @@ public class CharacterController : SingletonMonoBehavior<CharacterController>
 
     void SPCounting()
     {
-        float val = FPSS.instance.FinshPerSpecifySec <= 0 ? -5 : FPSS.instance.FinshPerSpecifySec;
+        float CurvedVal = Curve.Evaluate( FPSS.instance.FinshPerSpecifySec ) ;
+
+        float val = CurvedVal <= 0 ? -5 : CurvedVal;
         val *= multiple;
         SP += (SPRecoverPerSec - val) * Time.deltaTime;
         SP = MyClamp(SP, 0, MaxSP);
